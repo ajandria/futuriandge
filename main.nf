@@ -59,7 +59,7 @@ process FastQC {
     tuple val(sample_id), path(reads)
 
     output:
-    path("fastqc_${sample_id}_logs")
+    path("*")
 
     script:
     """
@@ -67,5 +67,7 @@ process FastQC {
     """  
 }
 
-
+workflow {
+    FastQC_ch = FastQC(params.rads)
+}
 
