@@ -17,8 +17,8 @@ nextflow.enable.dsl = 2
     GENOME PARAMETER VALUES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-params.reads = "${baseDir}/*_{R1,R2}.fastq.gz"
-params.outDir = "results"
+params.reads = "${baseDir}/../FastQ/*_{R1,R2}.fastq*"
+params.outDir = "${baseDir}/../results"
 params.organism = null
 params.strandedness = null
 params.protocl = null
@@ -32,13 +32,15 @@ params.protocl = null
 log.info """\
 ====================================================================================================================
 
-   C E N T E R   F O R   R E G E N E R A T I V E   A N D   I M M U N E R E G U L A T I O N   M U B
-   U N I F O R M A L   B U L K   R N A - S E Q   P I P E L I N E | v.0.1
+   U N I F O R M A L   B U L K   R N A - S E Q   D I F F E R E N T I A L   G E N E   
+   E X P R E S S I O N   A N A L Y S I S   P I P E L I N E
+
+   V e r s i o n:   0 . 0 . 1
+
 
 =====================================================================================================================
 |                                                                                                                   
-| .fastq files                          : $fastq_in
-| Genome                                :                                                                                            
+| .fastq files                          : $params.reads                                                                                         
 |                                                                                                                     
 =====================================================================================================================
 """.stripIndent()
@@ -49,9 +51,11 @@ log.info """\
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-process FastQC {
+process fastqc {
 
-    publishDir "${params.outDir}/FastQC", mode:'copy'
+    publishDir "${params.outDir}/FastQC", mode: 'symlink'
+
+    conda 'conda-forge::openjdk bioconda::fastqc'
 
     tag "FastQC on ${sample_id}"
 
@@ -63,11 +67,73 @@ process FastQC {
 
     script:
     """
-    fastqc -t ${task.cpus} ${fastq_1} ${fastq_2}
+    fastqc -t ${task.cpus} $reads
+    """  
+}
+
+process fastp {
+
+    publishDir "${params.outDir}/fastp", mode: 'symlink'
+
+    conda 'bioconda::fastp'
+
+    tag "fastp on ${sample_id}"
+
+    input:
+    tuple val(sample_id), path(reads)
+
+    output:
+    tuple val(sample_id), path("${sample_id}_R*")
+    path("*")
+
+    script:
+    """
+    fastp -i ${reads[0]} -I ${reads[1]} -o ${sample_id}_R1_fastq.gz -O ${sample_id}_R2.fastq.gz -j ${sample_id}.json -h ${sample_id}.html \
+        -q 30 \
+        -e 25 \
+        -n 5 \
+        -l 40 \
+        -c \
+        -x \
+        -w ${task.cpus}
+    """  
+}
+
+process star {
+
+    publishDir "${params.outDir}/star", mode: 'symlink'
+
+    conda = '/home/ajan/.conda/envs/STAR_2.7.0d'
+
+    tag "star on ${sample_id}"
+
+    input:
+    tuple val(sample_id), files(reads)
+
+    output:
+    path("*")
+
+    script:
+    """
+    STAR --runThreadN ${task.cpus} --runMode alignReads \
+    --genomeDir $star_index_in \
+    --readFilesIn ${reads[0]} ${reads[1]} \
+    --readStrand Reverse \
+    --outSAMtype BAM SortedByCoordinate \
+    --sjdbGTFfile $gtf_in \
+    --sjdbOverhang 100 \
+    --outFileNamePrefix ${id}
     """  
 }
 
 workflow {
-    FastQC_ch = FastQC(params.rads)
+
+    Channel
+        .fromFilePairs(params.reads, checkIfExists: true)
+        .set{read_pairs_ch}
+
+    fastqc_ch = fastqc(read_pairs_ch)
+    fastp(read_pairs_ch))
+    //star_ch = star(fastp_ch)
 }
 
