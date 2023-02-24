@@ -21,7 +21,10 @@ params.reads = "${baseDir}/FastQ/*_{R1,R2}.fastq*"
 params.outDir = "${baseDir}/results"
 params.organism = null
 params.strandedness = null
-params.protocl = null
+params.protocol = null
+params.reference_genome = '/archive/users/ajan/projects/project_references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108_genomeDir_STAR_2.7.10b'
+params.gtf = '/archive/users/ajan/projects/project_references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108.chr.gtf'
+params.refFlat = '/archive/users/ajan/projects/project_references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108.chr.gtf.refFlat.gz'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,7 +58,9 @@ process fastqc {
 
     publishDir "${params.outDir}/FastQC", mode: 'symlink'
 
-    conda 'conda-forge::openjdk bioconda::fastqc'
+    conda 'conda-forge::openjdk bioconda::fastqc=0.11.9'
+
+    label = 'intense'
 
     tag "FastQC on ${sample_id}"
 
@@ -74,7 +79,9 @@ process fastp {
 
     publishDir "${params.outDir}/fastp", mode: 'symlink'
 
-    conda 'bioconda::fastp'
+    conda 'conda-forge::isa-l bioconda::fastp=0.23.2'
+
+    label = 'intense'
 
     tag "fastp on ${sample_id}"
 
@@ -108,7 +115,9 @@ process star {
 
     publishDir "${params.outDir}/star", mode: 'symlink'
 
-    conda = 'bioconda::star=2.1.10b'
+    conda = 'bioconda::star=2.7.10b'
+
+    label = 'intense'
 
     tag "star on ${sample_id}"
 
@@ -116,15 +125,15 @@ process star {
     tuple val(sample_id), path(reads)
 
     output:
-    path("*")
+    tuple val(sample_id), path("${sample_id}*.bam"), emit: aligned_with_star
+    path("*"), emit: star_to_multiqc
 
     """
     STAR --runMode alignReads \
-    --genomeDir $star_index_in \
-    --sjdbGTFfile $gtf_in \
+    --genomeDir ${params.reference_genome} \
+    --sjdbGTFfile ${params.gtf} \
     --readFilesIn ${reads[0]} ${reads[1]} \
-    # IF GZIPPED # --readFilesCommand zcat \
-    --readStrand Reverse \
+    --readFilesCommand UncompressionCommand \
     --outSAMtype BAM SortedByCoordinate \
     --outFileNamePrefix ${sample_id} \
     --runThreadN ${task.cpus}
@@ -133,34 +142,39 @@ process star {
 
  process qualimap {
 
-    conda 'bioconda::qualimap'
+    conda 'conda-forge::openjdk bioconda::qualimap=2.2.2d'
+
+    label = 'intense'
 
      publishDir "${params.outDir}/qualimap", mode:'copy'
    
      input:
-         tuple val(sample_id), file(bam) from star_qualimap
+         tuple val(sample_id), path(bam)
     
      output:
-         path id into qualimap_out_path
+         path("*"), emit: qualimap_to_multiqc
 
      script:
          """
-         export JAVA_OPTS="-Djava.io.tmpdir=/home/ajan/shared_folder/nextflow_liam_star/trash"
-         qualimap rnaseq -bam ${bam} -gtf ${gtf_in} -outdir ${id}/ -pe -p strand-specific-reverse -outformat PDF:HTML --java-mem-size=16G
+         export JAVA_OPTS="-Djava.io.tmpdir=${params.outDir}/qualimap"
+         qualimap rnaseq -bam ${bam} -gtf ${params.gtf} -outdir ${sample_id} /
+            -pe -p strand-specific-reverse -outformat PDF:HTML --java-mem-size=16G
 	"""
  }
 
  process picard_matrix {
 
-    conda 'bioconda::picard'
+    conda 'bioconda::picard=2.27.5'
 
      publishDir "${params.outDir}/picard", mode:'copy'
+
+     tag "qualimap on ${sample_id}"
    
      input:
-         set val(id), file(bam) from star_picard
+         set val(id), file(bam)
     
      output:
-         path id into picard_out_path
+         path id
 
      script:
          """
@@ -170,12 +184,12 @@ process star {
 
  process samtools_index {
 
-    conda 'bioconda::samtools'
+    conda 'bioconda::samtools=1.16.1'
 
      publishDir "${params.outDir}/star", mode:'copy'
    
      input:
-         set val(id), file(bam) from star_samtools_index
+         set val(id), file(bam)
     
      output:
          file("*")
@@ -188,15 +202,15 @@ process star {
 
  process samtools_flagstat {
 
-    conda 'bioconda::samtools'
+    conda 'bioconda::samtools=1.16.1'
 
      publishDir "${params.outDir}/samtools", mode:'copy'
    
      input:
-         set val(id), file(bam) from star_samtools_flagstat
+         set val(id), file(bam)
     
      output:
-         path ("${id}.txt") into samtools_flagstat_out_path
+         path ("${id}.txt")
 
      script:
          """
@@ -206,7 +220,7 @@ process star {
 
  process featureCounts {
 
-    conda 'bioconda::subread'
+    conda 'bioconda::subread=2.0.3'
 
      publishDir "${params.outDir}/featureCounts", mode:'copy'
    
@@ -233,11 +247,13 @@ process star {
 
 process multiqc {
 
-    conda 'conda-forge::importlib-metadata bioconda::multiqc'
+    conda 'conda-forge::importlib-metadata bioconda::multiqc=1.14'
 
     publishDir "${params.outDir}/multiqc", mode:'symlink'
    
     input:
+        path("*")
+        path("*")
         path("*")
         path("*")
     
@@ -270,12 +286,27 @@ workflow {
 
     // 3. Align with STAR
     star_ch = star(fastp_ch.fastp_to_align)
-    star_ch.view()
+    //star_ch.view()
+    star_ch.aligned_with_star.view()
 
-    // X. Run MultiQC an aggregate all of the stats for samples
+    // 4. Stats with qualimap
+    qualimap_ch = qualimap(star_ch.aligned_with_star)
+
+    // 5. Stats with picard
+    //qualimap_ch = qualimap(star_ch.aligned_with_star)
+
+    // 6. Stats with samtools
+    //qualimap_ch = qualimap(star_ch.aligned_with_star)
+
+    // 7. Count with subread
+    //qualimap_ch = qualimap(star_ch.aligned_with_star)
+
+    // 8. Run MultiQC an aggregate all of the stats for samples
     //fastp_ch.fastp_to_multiqc.view()
     multiqc_ch = multiqc(fastqc_ch.fastqcRaw_to_multiqc.collect(),
-        fastp_ch.fastp_to_multiqc.collect())
+        fastp_ch.fastp_to_multiqc.collect(),
+        star_ch.star_to_multiqc.collect(),
+        qualimap_ch.qualimap_to_multiqc.collect())
 
 }
 
