@@ -3,8 +3,6 @@ process fastqc {
 
     publishDir "${params.outDir}/FastQC", mode: 'symlink'
 
-    conda 'conda-forge::openjdk bioconda::fastqc=0.12.1'
-
     label = 'intense'
 
     tag "FastQC on ${sample_id}"
@@ -13,7 +11,7 @@ process fastqc {
     tuple val(sample_id), path(reads)
 
     output:
-    path("*")
+    path("*"), emit: fastqc_on_raw_to_multiqc
 
     """
     fastqc -t ${task.cpus} ${reads}

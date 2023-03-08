@@ -1,8 +1,6 @@
 
  process picard_matrix {
 
-    conda 'bioconda::picard=2.27.5'
-
      publishDir "${params.outDir}/picard", mode:'symlink'
 
      tag "qualimap on ${sample_id}"
@@ -18,4 +16,3 @@
          picard CollectRnaSeqMetrics -I ${bam} -O ${sample_id}_picard_CollectRnaSeqMetrics --REF_FLAT ${params.refFlat} --STRAND SECOND_READ_TRANSCRIPTION_STRAND
 	"""
  }
- 

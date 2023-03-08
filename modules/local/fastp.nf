@@ -3,8 +3,6 @@ process fastp {
 
     publishDir "${params.outDir}/fastp", mode: 'symlink'
 
-    conda '/home/ajan/.conda/envs/fastp'
-
     label = 'intense'
 
     tag "fastp on ${sample_id}"

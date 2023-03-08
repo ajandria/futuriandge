@@ -1,8 +1,6 @@
  
   process samtools {
 
-    conda 'conda-forge::zlib bioconda::samtools=1.16.1'
-
      publishDir "${params.outDir}/samtools", mode:'symlink'
    
      input:

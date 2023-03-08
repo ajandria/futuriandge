@@ -1,8 +1,6 @@
  
  process featureCounts {
 
-    conda 'conda-forge::zlib bioconda::subread=2.0.3'
-
      publishDir "${params.outDir}/featureCounts", mode:'symlink'
    
      input:
@@ -23,4 +21,3 @@
             ${bam}
 	"""
  }
- 

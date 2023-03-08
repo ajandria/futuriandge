@@ -6,8 +6,6 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     SodzieR/DE_RNA-Seq_nf
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    This pipeline has been based on the ENCODE bulk RNA-seq data processing standards
-        https://www.encodeproject.org/data-standards/encode4-bulk-rna/
     Github : https://github.com/SodzieR/DE_RNA-Seq_nf
 ----------------------------------------------------------------------------------------
 */
@@ -17,6 +15,7 @@ nextflow.enable.dsl = 2
     GENOME PARAMETER VALUES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
 params.reads = "${baseDir}/FastQ/*_{R1,R2}.fastq.gz"
 params.outDir = "${baseDir}/results"
 params.organism = null
@@ -42,64 +41,43 @@ log.info """\
 
 
 =====================================================================================================================
-|                                                                                                                   
-| .fastq files                          : $params.reads                                                                                         
-|                                                                                                                     
+|
+| .fastq files                          : $params.reads
+|
 =====================================================================================================================
 """.stripIndent()
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    EXECUTE WORKFLOW
+    NAMED WORKFLOW FOR PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { fastqc } from "${baseDir}/modules/local/fastqc.nf"
-include { fastp } from "${baseDir}/modules/local/fastp.nf"
-include { star } from "${baseDir}/modules/local/star.nf"
-include { qualimap } from "${baseDir}/modules/local/qualimap.nf"
-include { picard_matrix } from "${baseDir}/modules/local/picard.nf"
-include { samtools } from "${baseDir}/modules/local/samtools.nf"
-include { featureCounts } from "${baseDir}/modules/local/subread.nf"
-include { multiqc } from "${baseDir}/modules/local/multiqc.nf"
+include { RUN_PROCESSING_FOR_DE_ANALYSIS as RUN_PIPELINE } from "${baseDir}/workflows/run_processing.nf"
 
-workflow {
-
-    // 0. Read paired end files
-    Channel
-        .fromFilePairs(params.reads, checkIfExists: true)
-        .set{read_pairs_ch}
-
-    // 1. FastQC on raw .fastq files
-    fastqc(read_pairs_ch)
-
-    // 2. Run fastp on the raw .fastq files
-    fastp(read_pairs_ch)
-
-    // 3. Align with STAR
-    star(fastp.out[0])
-
-    // 4. Stats with qualimap
-    qualimap(star.out[0])
-
-    // 5. Stats with picard
-    picard_matrix(star.out[0])
-
-    // 6. Stats with samtools
-    samtools(star.out[0])
-
-    // 7. Count with subread
-    featureCounts(star.out[0])
-
-    // 8. Run MultiQC an aggregate all of the stats for samples
-    multiqc_ch = multiqc(fastqc.out[1].collect(),
-        fastp.out[1].collect(),
-        star.out[1].collect(),
-        qualimap.out[0].collect(),
-        picard_matrix.out[0].collect(),
-        samtools.out[0].collect(),
-        featureCounts.out[0].collect()
-        )
-
+//
+// WORKFLOW: Run main nf-core/rnaseq analysis pipeline
+//
+workflow DE_RNA_Seq_nf {
+    RUN_PIPELINE()
 }
 
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RUN ALL WORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+//
+// WORKFLOW: Execute a single named workflow for the pipeline
+// See: https://github.com/nf-core/rnaseq/issues/619
+//
+workflow {
+    DE_RNA_Seq_nf()
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    THE END
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/

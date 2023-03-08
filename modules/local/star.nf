@@ -3,8 +3,6 @@ process star {
 
     publishDir "${params.outDir}/star", mode: 'symlink'
 
-    conda = 'bioconda::star=2.7.10b bioconda::samtools'
-
     label = 'intense'
 
     tag "star on ${sample_id}"

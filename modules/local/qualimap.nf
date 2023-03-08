@@ -1,8 +1,6 @@
 
  process qualimap {
 
-    conda 'conda-forge::openjdk bioconda::qualimap=2.2.2a'
-
     label = 'intense'
 
      publishDir "${params.outDir}/qualimap", mode:'symlink'
@@ -27,4 +25,3 @@
             --java-mem-size=16G
 	"""
  }
- 
