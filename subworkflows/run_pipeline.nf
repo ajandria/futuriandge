@@ -1,6 +1,7 @@
 
 include { fastqc } from "${baseDir}/modules/local/fastqc.nf"
 include { fastp } from "${baseDir}/modules/local/fastp.nf"
+include { sortmerna } from "${baseDir}/modules/local/sortmerna.nf"
 include { star } from "${baseDir}/modules/local/star.nf"
 include { qualimap } from "${baseDir}/modules/local/qualimap.nf"
 include { picard_matrix } from "${baseDir}/modules/local/picard.nf"
@@ -17,8 +18,10 @@ workflow run_pipeline {
     fastqc(fastq_files)
     // 2. Run fastp on the raw .fastq files
     fastp(fastq_files)
+    // 2. Remove rRNA
+    sortmerna(fastp.out[0])
     // 3. Align with STAR
-    star(fastp.out[0])
+    star(sortmerna.out[0])
     // 4. Stats with qualimap
     qualimap(star.out[0])
     // 5. Stats with picard
@@ -34,6 +37,7 @@ workflow run_pipeline {
     .mix(picard_matrix.out.picard_to_multiqc.collect())
     .mix(qualimap.out.qualimap_to_multiqc.collect())
     .mix(star.out.star_to_multiqc.collect())
+    .mix(sortmerna.out[1].collect())
     .mix(fastp.out.fastp_to_multiqc.collect())
     .mix(fastqc.out.fastqc_on_raw_to_multiqc.collect())).collect()
 

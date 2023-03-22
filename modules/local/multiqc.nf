@@ -11,8 +11,12 @@ process multiqc {
 
     script:
         """
+
         multiqc * \
+            -c ${baseDir}/assets/multiqc_config.yaml \
             -n multiqc_all
 
+
+            
 	"""
 }
