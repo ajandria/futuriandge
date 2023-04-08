@@ -7,6 +7,7 @@ include { qualimap } from "${baseDir}/modules/local/qualimap.nf"
 include { picard_matrix } from "${baseDir}/modules/local/picard.nf"
 include { samtools } from "${baseDir}/modules/local/samtools.nf"
 include { featureCounts } from "${baseDir}/modules/local/subread.nf"
+include { SALMON_QUANT } from "${baseDir}/modules/nf-core/salmon/quant/main.nf"
 
 workflow run_pipeline {
     
@@ -30,6 +31,8 @@ workflow run_pipeline {
     samtools(star.out[0])
     // 7. Count with subread
     featureCounts(star.out[0])
+    // 8. Additionally quantify with salmon
+    SALMON_QUANT(sortmerna.out[0])
 
     emit:
     qc_MultiQC_input = (featureCounts.out.featureCounts_to_multiqc.collect()
@@ -39,6 +42,7 @@ workflow run_pipeline {
     .mix(star.out.star_to_multiqc.collect())
     .mix(sortmerna.out[1].collect())
     .mix(fastp.out.fastp_to_multiqc.collect())
-    .mix(fastqc.out.fastqc_on_raw_to_multiqc.collect())).collect()
+    .mix(fastqc.out.fastqc_on_raw_to_multiqc.collect())
+    .mix(SALMON_QUANT.out.salmon_to_multiqc.collect())).collect()
 
 }

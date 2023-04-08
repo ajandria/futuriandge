@@ -25,6 +25,8 @@ params.reference_genome = '/archive/users/ajan/references/Mus_musculus.GRCm39.10
 params.gtf = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108.chr.gtf'
 params.refFlat = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108.chr.gtf.refFlat.gz'
 params.rRNA_db_path = '/archive/users/ajan/references/rRNA_databases'
+params.gene_map = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/salmon_1.10_1/txp2gene.tsv'
+params.salmon_index = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/salmon_1.10_1/salmon_index'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
