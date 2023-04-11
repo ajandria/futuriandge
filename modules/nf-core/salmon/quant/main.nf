@@ -23,14 +23,39 @@ process SALMON_QUANT {
 
     script:
 
-    if({params.strandedness == 'reverse'} && {params.protocol = 'paired-end'})
+    // Define input reads
+    def input_reads = params.protocol == 'single-end' ? "-r ${reads[0]}" : "-1 ${reads[0]} -2 ${reads[1]}"
+
+    // Dict of library types
+    def strandedness_opts = [
+        'paired-end', 'single-end', 'reverse', 'forward', 'unstranded'
+    ]
+    
+    // By default try to auto-detect library type
+    def strandedness =  'A'
+
+    // Check if library type is valid and assign library type
+    if ({params.strandedness} && {params.protocol}) {
+        if ({strandedness_opts.contains(params.strandedness)} && {strandedness_opts.contains(params.protocol)}) {
+            if (params.strandedness == 'reverse') {
+                strandedness = params.protocol == 'paired-end' ? 'ISR' : 'SR'
+            } else if (params.strandedness == 'forward') {
+                strandedness = params.protocol == 'paired-end' ? 'ISF' : 'SF'
+            } else if (params.strandedness == 'unstranded') {
+                strandedness = params.protocol == 'paired-end' ? 'IU' : 'U'
+            }
+        } else {
+            log.info "[Salmon Quant] Invalid library type specified '--libType=${lib_type}', defaulting to auto-detection with '--libType=A'."
+        }
+    }
+
+    if({strandedness})
 
         """
             salmon quant \
                 -i ${params.salmon_index} \
-                -l ISR \
-                -1 ${reads[0]} \
-                -2 ${reads[1]} \
+                -l ${strandedness} \
+                ${input_reads} \
                 -p ${task.cpus} \
                 -o ${sample_id}_salmon \
                 -g ${params.gene_map}
@@ -40,89 +65,6 @@ process SALMON_QUANT {
                 salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
             END_VERSIONS
 
-	    """
-
-    else if({params.strandedness == 'forward'} && {params.protocol = 'paired-end'})
-
-        """
-            salmon quant \
-                -i ${salmon_index} \
-                -l ISF \
-                -1 ${reads[0]} \
-                -2 ${reads[1]} \
-                -p ${task.cpus} \
-                -o ${sample_id}_salmon \
-                -g ${gene_map}
-
-            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
-            "${task.process}":
-                salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
-            END_VERSIONS
-	    """
-
-    else if({params.strandedness == 'unstranded'} && {params.protocol = 'paired-end'})
-
-        """
-            salmon quant \
-                -i ${salmon_index} \
-                -l IU \
-                -1 ${reads[0]} \
-                -2 ${reads[1]} \
-                -p ${task.cpus} \
-                -o ${sample_id}_salmon \
-                -g ${gene_map}
-
-            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
-            "${task.process}":
-                salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
-            END_VERSIONS
-
-	    """
-
-    else if({params.strandedness == 'reverse'} && {params.protocol = 'single-end'})
-
-        """
-            salmon quant \
-                -i ${salmon_index} \
-                -l SR \
-                -1 ${reads[0]} \
-                -p ${task.cpus} \
-                -o ${sample_id}_salmon \
-                -g ${gene_map}
-
-            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
-            "${task.process}":
-                salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
-            END_VERSIONS
-	    """
-
-    else if({params.strandedness == 'forward'} && {params.protocol = 'single-end'})
-
-        """
-            salmon quant \
-                -i ${salmon_index} \
-                -l SF \
-                -1 ${reads[0]} \
-                -p ${task.cpus} \
-                -o ${sample_id}_salmon \
-                -g ${gene_map}
-
-            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
-            "${task.process}":
-                salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
-            END_VERSIONS
-	    """
-
-    else if({params.strandedness == 'unstranded'} && {params.protocol = 'single-end'})
-
-        """
-            salmon quant \
-                -i ${salmon_index} \
-                -l U \
-                -1 ${reads[0]} \
-                -p ${task.cpus} \
-                -o ${sample_id}_salmon \
-                -g ${gene_map}
 	    """
 
     else
