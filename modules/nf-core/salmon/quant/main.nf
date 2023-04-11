@@ -1,7 +1,7 @@
 // Modified based od nf-core/salmon_quant module
 process SALMON_QUANT {
 
-    publishDir "${params.outDir}/salmon_quant/${sample_id}", mode:'symlink'
+    publishDir "${params.outDir}/salmon_quant", mode:'symlink'
     
     tag "${sample_id}"
     label "intense"
@@ -15,30 +15,31 @@ process SALMON_QUANT {
     tuple val(sample_id), path(reads)
 
     output:
-    path("${sample_id}")                          , emit: salmon_to_multiqc
-    path  "versions.yml"               , emit: versions
+    path  ("${sample_id}_salmon")                          , emit: salmon_to_multiqc
+    path  "${sample_id}_salmon_versions.yml"               , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
+
     if({params.strandedness == 'reverse'} && {params.protocol = 'paired-end'})
 
         """
-        
             salmon quant \
                 -i ${params.salmon_index} \
                 -l ISR \
                 -1 ${reads[0]} \
                 -2 ${reads[1]} \
                 -p ${task.cpus} \
-                -o ${sample_id} \
+                -o ${sample_id}_salmon \
                 -g ${params.gene_map}
 
-            cat <<-END_VERSIONS > versions.yml
+            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
             "${task.process}":
                 salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
             END_VERSIONS
+
 	    """
 
     else if({params.strandedness == 'forward'} && {params.protocol = 'paired-end'})
@@ -50,10 +51,10 @@ process SALMON_QUANT {
                 -1 ${reads[0]} \
                 -2 ${reads[1]} \
                 -p ${task.cpus} \
-                -o ${sample_id} \
+                -o ${sample_id}_salmon \
                 -g ${gene_map}
 
-            cat <<-END_VERSIONS > versions.yml
+            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
             "${task.process}":
                 salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
             END_VERSIONS
@@ -68,13 +69,14 @@ process SALMON_QUANT {
                 -1 ${reads[0]} \
                 -2 ${reads[1]} \
                 -p ${task.cpus} \
-                -o ${sample_id} \
+                -o ${sample_id}_salmon \
                 -g ${gene_map}
 
-            cat <<-END_VERSIONS > versions.yml
+            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
             "${task.process}":
                 salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
             END_VERSIONS
+
 	    """
 
     else if({params.strandedness == 'reverse'} && {params.protocol = 'single-end'})
@@ -85,10 +87,10 @@ process SALMON_QUANT {
                 -l SR \
                 -1 ${reads[0]} \
                 -p ${task.cpus} \
-                -o ${sample_id} \
+                -o ${sample_id}_salmon \
                 -g ${gene_map}
 
-            cat <<-END_VERSIONS > versions.yml
+            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
             "${task.process}":
                 salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
             END_VERSIONS
@@ -102,10 +104,10 @@ process SALMON_QUANT {
                 -l SF \
                 -1 ${reads[0]} \
                 -p ${task.cpus} \
-                -o ${sample_id} \
+                -o ${sample_id}_salmon \
                 -g ${gene_map}
 
-            cat <<-END_VERSIONS > versions.yml
+            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
             "${task.process}":
                 salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
             END_VERSIONS
@@ -119,13 +121,8 @@ process SALMON_QUANT {
                 -l U \
                 -1 ${reads[0]} \
                 -p ${task.cpus} \
-                -o ${sample_id} \
+                -o ${sample_id}_salmon \
                 -g ${gene_map}
-
-            cat <<-END_VERSIONS > versions.yml
-            "${task.process}":
-                salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
-            END_VERSIONS
 	    """
 
     else
