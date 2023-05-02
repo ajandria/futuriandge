@@ -1,3 +1,3 @@
 sample,fastq_1,fastq_2,strandedness
-10k_PR_Homo_A_M24,/archive/users/ajan/computational_pipelines/DE_RNA-Seq_nf/FastQ/10k_PR_Homo_A_M24_L001_R1.fastq.gz,/archive/users/ajan/computational_pipelines/DE_RNA-Seq_nf/FastQ/10k_PR_Homo_A_M24_L001_R2.fastq.gz,reverse
-10k_RM_Hetero_A_M5,/archive/users/ajan/computational_pipelines/DE_RNA-Seq_nf/FastQ/10k_RM_Hetero_A_M5_L001_R1.fastq.gz,/archive/users/ajan/computational_pipelines/DE_RNA-Seq_nf/FastQ/10k_RM_Hetero_A_M5_L001_R2.fastq.gz,reverse
+M24,/archive/users/ajan/computational_pipelines/DE_RNA-Seq_nf/tests/test_FastQ/M24_L001_R1.fastq.gz,/archive/users/ajan/computational_pipelines/DE_RNA-Seq_nf/tests/test_FastQ/M24_L001_R2.fastq.gz,reverse
+M5,/archive/users/ajan/computational_pipelines/DE_RNA-Seq_nf/tests/test_FastQ/M5_L001_R1.fastq.gz,/archive/users/ajan/computational_pipelines/DE_RNA-Seq_nf/tests/test_FastQ/M5_L001_R2.fastq.gz,reverse
