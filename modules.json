@@ -1,6 +1,6 @@
 {
   "name": "futuriandge",
-  "homePage": "https://github.com/ajandria/DE_RNA-Seq_nf",
+  "homePage": "https://github.com/ajandria/futuriandge",
   "repos": {
     "https://github.com/nf-core/modules.git": {
       "modules": {

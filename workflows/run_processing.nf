@@ -1,18 +1,23 @@
 
-include { run_pipeline as RUN_PROCESSING } from "${baseDir}/subworkflows/run_pipeline.nf"
-include { run_MultiQC as MULTIQC } from "${baseDir}/subworkflows/run_MultiQC.nf"
+include { INPUT_CHECK } from "${baseDir}/subworkflows/local/input_check.nf"
+include { PROCESSING } from "${baseDir}/subworkflows/run_pipeline.nf"
+include { MULTIQC } from "${baseDir}/subworkflows/run_MultiQC.nf"
 
-workflow RUN_PROCESSING_FOR_DE_ANALYSIS {
+workflow UNIFORMAL {
+
+    // Check samplesheet
+    INPUT_CHECK(
+        params.samplesheet
+    )
 
     // Processing workflow
-    RUN_PROCESSING(
+    PROCESSING(
         // 0. Read paired end files
-        Channel
-            .fromFilePairs(params.reads, checkIfExists: true)
+        INPUT_CHECK.out.reads
     )
 
     // Gather QC stats
     MULTIQC(
-        RUN_PROCESSING.out.qc_MultiQC_input
+        PROCESSING.out.qc_MultiQC_input
     )
 }

@@ -3,7 +3,7 @@ process SALMON_QUANT {
 
     publishDir "${params.outDir}/salmon_quant", mode:'symlink'
     
-    tag "${sample_id}"
+    tag "${meta}"
     label "intense"
 
     conda "conda-forge::boost-cpp bioconda::salmon=1.10.1"
@@ -12,11 +12,11 @@ process SALMON_QUANT {
         'quay.io/biocontainers/salmon:1.10.1--h7e5ed60_0' }"
 
     input:
-    tuple val(sample_id), path(reads)
+    tuple val(meta), path(reads)
 
     output:
-    path  ("${sample_id}_salmon")                          , emit: salmon_to_multiqc
-    path  "${sample_id}_salmon_versions.yml"               , emit: versions
+    path  ("${meta.id}_salmon")                          , emit: salmon_to_multiqc
+    path  "${meta.id}_salmon_versions.yml"               , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -48,27 +48,19 @@ process SALMON_QUANT {
             log.info "[Salmon Quant] Invalid library type specified '--libType=${lib_type}', defaulting to auto-detection with '--libType=A'."
         }
     }
-
-    if({strandedness})
-
         """
             salmon quant \
                 -i ${params.salmon_index} \
                 -l ${strandedness} \
                 ${input_reads} \
                 -p ${task.cpus} \
-                -o ${sample_id}_salmon \
+                -o ${meta.id}_salmon \
                 -g ${params.gene_map}
 
-            cat <<-END_VERSIONS > ${sample_id}_salmon_versions.yml
+            cat <<-END_VERSIONS > ${meta.id}_salmon_versions.yml
             "${task.process}":
                 salmon: \$(echo \$(salmon --version) | sed -e "s/salmon //g")
             END_VERSIONS
 
 	    """
-
-    else
-
-        throw new IllegalArgumentException("Unknown strandedness $params.strandedness")
-        
  }

@@ -14,23 +14,20 @@ rRNA_8 = "${params.rRNA_db_path}/silva-euk-28s-id98.fasta"
      
      label 'intense'
 
-     tag "sortmerna on ${sample_id}"
+     tag "sortmerna on ${meta}"
  
      input:
-         tuple val(sample_id), path(reads)
+         tuple val(meta), path(reads)
   
      output:
-         tuple val(sample_id), path("${sample_id}_*.fq.gz")
+         tuple val(meta), path("${meta.id}_*.fq.gz")
          file("*.log")
 
      // --paired_out -> says to keep pairs together (if one matches, then count both as matching db) - no need for repair.sh
      // fwd and rev files are just the naming scheme used (in reality these are the R1 and R2 files)
 
-    script:
-    if(params.protocol == 'paired-end')
-
         """
-         mkdir -p ${params.outDir}/sortmerna/${sample_id}
+         mkdir -p ${params.outDir}/sortmerna/${meta.id}
          sortmerna \
          --ref ${rRNA_1} \
          --ref ${rRNA_2} \
@@ -42,45 +39,15 @@ rRNA_8 = "${params.rRNA_db_path}/silva-euk-28s-id98.fasta"
          --ref ${rRNA_8} \
          --reads ${reads[0]} \
          --reads ${reads[1]} \
-         --workdir ${params.outDir}/sortmerna/${sample_id} \
+         --workdir ${params.outDir}/sortmerna/${meta.id} \
          -a ${task.cpus} \
          --fastx \
          -v \
          -m 31744 \
          --out2 \
          --paired_out \
-         --other ${sample_id} \
-         --aligned contamined_${sample_id}
+         --other ${meta.id} \
+         --aligned contamined_${meta.id}
 	    """
-
-    else if(params.protocol == 'single-end')
-
-        """
-         mkdir -p ${params.outDir}/sortmerna/${sample_id}
-         sortmerna \
-         --ref ${rRNA_1} \
-         --ref ${rRNA_2} \
-         --ref ${rRNA_3} \
-         --ref ${rRNA_4} \
-         --ref ${rRNA_5} \
-         --ref ${rRNA_6} \
-         --ref ${rRNA_7} \
-         --ref ${rRNA_8} \
-         --reads ${reads[0]} \
-         --reads ${reads[1]} \
-         --workdir ${params.outDir}/sortmerna/${sample_id} \
-         -a ${task.cpus} \
-         --fastx \
-         -v \
-         -m 31744 \
-         --out2 \
-         --paired_out \
-         --other ${sample_id} \
-         --aligned contamined_${sample_id}
-	    """
-
-    else
-
-        throw new IllegalArgumentException("Unknown strandedness $params.strandedness")
      
  }
