@@ -1,7 +1,7 @@
 
 include { multiqc } from "${baseDir}/modules/local/multiqc.nf"
 
-workflow run_MultiQC {
+workflow MULTIQC {
 
     take:
     input_for_MultiQC
