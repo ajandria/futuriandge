@@ -14,7 +14,7 @@ nextflow.enable.dsl = 2
     VALIDATE & PRINT PARAMETER SUMMARY
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
+params.contrasts = null // if null dont run DESeq2 downstream subworkflow
 params.reads = "${baseDir}/FastQ/*_{R1,R2}.fastq.gz"
 params.samplesheet = "${baseDir}/tests/test_sample_sheet.csv"
 params.outDir = "${baseDir}/results"

@@ -1,3 +1,5 @@
+// Adapted based on nf-core - DSL2 Modules 
+
 //
 // Check input samplesheet and get read channels
 //

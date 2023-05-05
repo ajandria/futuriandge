@@ -45,4 +45,8 @@ workflow PROCESSING {
     .mix(FASTQC.out.zip.map { it -> it[1] }.collect())
     .mix(SALMON_QUANT.out.salmon_to_multiqc.collect())).collect()
 
+    //featureCounts_meta = featureCounts.out.counts_path.map { it -> it[0] }.collect()
+    //featureCounts_paths = featureCounts.out.counts_path.map { it -> it[1] }.collect()
+    featureCounts_paths = featureCounts.out.counts_path.collect()
+
 }

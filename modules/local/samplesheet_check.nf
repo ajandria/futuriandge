@@ -1,3 +1,4 @@
+// Adapted based on nf-core - DSL2 Modules 
 process SAMPLESHEET_CHECK {
     tag "$samplesheet"
     label 'process_single'
