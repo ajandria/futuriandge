@@ -7,3 +7,8 @@
 Welcome to **DE_RNA-Seq_nf** - a bioinformatics best-practice analysis pipeline for up-stream processing of RNA-Seq data with the main focus on differential expression analysis.
 
 <!-- TODO: Base on nf-core template -->
+
+## Run test data as:
+```
+nextflow run main.nf -c nextflow.config -with-conda
+```
