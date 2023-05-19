@@ -13,6 +13,7 @@ process fastqc {
     output:
     path("*"), emit: fastqc_on_raw_to_multiqc
 
+    script:
     """
     fastqc -t ${task.cpus} ${reads}
     """  
