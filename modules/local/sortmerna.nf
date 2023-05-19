@@ -26,6 +26,9 @@ rRNA_8 = "${params.rRNA_db_path}/silva-euk-28s-id98.fasta"
      // --paired_out -> says to keep pairs together (if one matches, then count both as matching db) - no need for repair.sh
      // fwd and rev files are just the naming scheme used (in reality these are the R1 and R2 files)
 
+     script:
+     // Define input reads
+     def input_reads = meta.single_end == 'true' ? "--reads ${reads[0]}" : "--reads ${reads[0]} --reads ${reads[1]}"
         """
          mkdir -p ${params.outDir}/sortmerna/${meta.id}
          sortmerna \
@@ -37,8 +40,7 @@ rRNA_8 = "${params.rRNA_db_path}/silva-euk-28s-id98.fasta"
          --ref ${rRNA_6} \
          --ref ${rRNA_7} \
          --ref ${rRNA_8} \
-         --reads ${reads[0]} \
-         --reads ${reads[1]} \
+         ${input_reads} \
          --workdir ${params.outDir}/sortmerna/${meta.id} \
          -a ${task.cpus} \
          --fastx \

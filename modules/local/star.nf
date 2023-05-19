@@ -15,11 +15,13 @@ process star {
     path("*"), emit: star_to_multiqc
 
     script:
+     // Define input reads
+     def input_reads = meta.single_end == 'true' ? "--readFilesIn ${reads[0]}" : "--readFilesIn ${reads[0]} ${reads[1]}"
         """
         STAR --runMode alignReads \
         --genomeDir ${params.reference_genome} \
         --sjdbGTFfile ${params.gtf} \
-        --readFilesIn ${reads[0]} ${reads[1]} \
+        --readFilesIn ${input_reads} \
         --readFilesCommand zcat \
         --outSAMtype BAM SortedByCoordinate \
         --outFileNamePrefix ${meta.id} \

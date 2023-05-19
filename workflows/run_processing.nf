@@ -1,6 +1,7 @@
 
 include { INPUT_CHECK } from "${baseDir}/subworkflows/local/input_check.nf"
 include { PROCESSING } from "${baseDir}/subworkflows/run_pipeline.nf"
+include { DOWNSTREAM_PROCESSING } from "${baseDir}/subworkflows/local/downstream_analysis.nf"
 include { MULTIQC } from "${baseDir}/subworkflows/run_MultiQC.nf"
 
 workflow UNIFORMAL {
@@ -20,4 +21,12 @@ workflow UNIFORMAL {
     MULTIQC(
         PROCESSING.out.qc_MultiQC_input
     )
+
+    // If metadata is provided, proceed to downstream analysis
+    if ( params.contrasts != null ) {
+        DOWNSTREAM_PROCESSING(
+            PROCESSING.out.featureCounts_paths
+        )
+    }
+
 }
