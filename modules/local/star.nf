@@ -21,7 +21,7 @@ process star {
         STAR --runMode alignReads \
         --genomeDir ${params.reference_genome} \
         --sjdbGTFfile ${params.gtf} \
-        --readFilesIn ${input_reads} \
+        ${input_reads} \
         --readFilesCommand zcat \
         --outSAMtype BAM SortedByCoordinate \
         --outFileNamePrefix ${meta.id} \
