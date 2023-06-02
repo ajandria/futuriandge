@@ -10,5 +10,5 @@ Welcome to **DE_RNA-Seq_nf** - a bioinformatics best-practice analysis pipeline 
 
 ## Run test data as:
 ```
-nextflow run main.nf -c nextflow.config -with-conda
+nextflow run ajandria/futuriandge -r dev -latest -profile local,conda --organism mouse -with-conda
 ```
