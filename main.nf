@@ -16,7 +16,7 @@ nextflow.enable.dsl = 2
 */
 // Initial params
 params.contrasts = null // if null dont run DESeq2 downstream subworkflow
-params.samplesheet = "${baseDir}/tests/test_sample_sheet.csv"
+params.input = "${baseDir}/tests/test_sample_sheet.csv"
 params.outDir = "${baseDir}/results"
 params.organism = null
 
@@ -41,6 +41,13 @@ if (params.organism == null) {
     params.salmon_index = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/salmon_1.10_1/salmon_index'
 }
 
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    VALIDATE & PRINT PARAMETER SUMMARY
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+WorkflowMain.initialise(workflow, params, log)
 
 
 /*
