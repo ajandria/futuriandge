@@ -24,29 +24,27 @@ process SALMON_QUANT {
     script:
 
     // Define input reads
-    def input_reads = params.protocol == 'single-end' ? "-r ${reads[0]}" : "-1 ${reads[0]} -2 ${reads[1]}"
+    def input_reads = meta.single_end ? "-r ${reads[0]}" : "-1 ${reads[0]} -2 ${reads[1]}"
 
     // Dict of library types
     def strandedness_opts = [
-        'paired-end', 'single-end', 'reverse', 'forward', 'unstranded'
+        'reverse', 'forward', 'unstranded'
     ]
     
     // By default try to auto-detect library type
-    def strandedness =  'A'
+    def lib_type =  'A'
 
     // Check if library type is valid and assign library type
-    if ({params.strandedness} && {params.protocol}) {
-        if ({strandedness_opts.contains(params.strandedness)} && {strandedness_opts.contains(params.protocol)}) {
-            if (params.strandedness == 'reverse') {
-                strandedness = params.protocol == 'paired-end' ? 'ISR' : 'SR'
-            } else if (params.strandedness == 'forward') {
-                strandedness = params.protocol == 'paired-end' ? 'ISF' : 'SF'
-            } else if (params.strandedness == 'unstranded') {
-                strandedness = params.protocol == 'paired-end' ? 'IU' : 'U'
-            }
-        } else {
-            log.info "[Salmon Quant] Invalid library type specified '--libType=${lib_type}', defaulting to auto-detection with '--libType=A'."
+    if ({strandedness_opts.contains(meta.strandedness)}) {
+        if (meta.strandedness == 'reverse') {
+            strandedness = meta.single_end == true ? 'ISR' : 'SR'
+        } else if (meta.strandedness == 'forward') {
+            strandedness = meta.single_end == true ? 'ISF' : 'SF'
+        } else if (meta.strandedness == 'unstranded') {
+            strandedness = meta.single_end == true ? 'IU' : 'U'
         }
+    } else {
+        log.info "[Salmon Quant] Invalid library type specified '--libType=${lib_type}', defaulting to auto-detection with '--libType=A'."
     }
         """
             salmon quant \

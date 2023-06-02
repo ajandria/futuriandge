@@ -7,12 +7,17 @@ process multiqc {
         path("*")
     
     output:
-        file("multiqc_all.html")
+        file("multiqc_*.html")
 
     script:
         """
         multiqc * \
             -c ${baseDir}/assets/multiqc_config.yaml \
             -n multiqc_all
+
+        multiqc * \
+            -c ${baseDir}/assets/multiqc_config.yaml \
+            -n multiqc_all_interactive \
+            --interactive
 	"""
 }

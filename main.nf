@@ -14,16 +14,34 @@ nextflow.enable.dsl = 2
     VALIDATE & PRINT PARAMETER SUMMARY
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+// Initial params
 params.contrasts = null // if null dont run DESeq2 downstream subworkflow
-params.reads = "${baseDir}/FastQ/*_{R1,R2}.fastq.gz"
 params.samplesheet = "${baseDir}/tests/test_sample_sheet.csv"
 params.outDir = "${baseDir}/results"
-params.reference_genome = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108_genomeDir_STAR_2.7.10b'
-params.gtf = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108.chr.gtf'
-params.refFlat = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108.chr.gtf.refFlat.gz'
+params.organism = null
+
+// Constant for rRNA screening using SILVA dbs
 params.rRNA_db_path = '/archive/users/ajan/references/rRNA_databases'
-params.gene_map = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/salmon_1.10_1/txp2gene.tsv'
-params.salmon_index = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/salmon_1.10_1/salmon_index'
+
+if (params.organism == null) {
+    error "params.organism was not provided. Please specify an organism."
+} else if (params.organism == 'human') {
+    println("Organism is human")
+    params.reference_genome = '/archive/users/ajan/references/Homo_sapiens_GRCh38_109/Homo_sapiens.GRCh38.109_genomeDir_STAR_2.7.10b'
+    params.gtf = '/archive/users/ajan/references/Homo_sapiens_GRCh38_109/Homo_sapiens.GRCh38.109.chr.gtf'
+    params.refFlat = '/archive/users/ajan/references/Homo_sapiens_GRCh38_109/Homo_sapiens.GRCh38.109.chr.gtf.gz.refflat.gz'
+    params.gene_map = '/archive/users/ajan/references/Homo_sapiens_GRCh38_109/homo_sapiens_salmon_1.10.1/txp2gene.tsv'
+    params.salmon_index = '/archive/users/ajan/references/Homo_sapiens_GRCh38_109/homo_sapiens_salmon_1.10.1/salmon_index-with_decoys'
+} else if (params.organism == 'mouse') {
+    println("Organism is mouse")
+    params.reference_genome = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108_genomeDir_STAR_2.7.10b'
+    params.gtf = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108.chr.gtf'
+    params.refFlat = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/Mus_musculus.GRCm39.108.chr.gtf.refFlat.gz'
+    params.gene_map = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/salmon_1.10_1/txp2gene.tsv'
+    params.salmon_index = '/archive/users/ajan/references/Mus_musculus.GRCm39.108/salmon_1.10_1/salmon_index'
+}
+
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,7 +60,7 @@ log.info """\
 
 =====================================================================================================================
 |
-| .fastq files                          : $params.reads
+| Sample sheet                         : $params.samplesheet
 |
 =====================================================================================================================
 """.stripIndent()

@@ -36,12 +36,12 @@ workflow PROCESSING {
 
     emit:
     qc_MultiQC_input = (featureCounts.out.featureCounts_to_multiqc.collect()
-    .mix(samtools.out.samtools_to_multiqc.collect())
-    .mix(picard_metrics.out.picard_to_multiqc.collect())
-    .mix(qualimap.out.qualimap_to_multiqc.collect())
+    .mix(samtools.out.samtools_to_multiqc.map { it -> it[1] }.collect())
+    .mix(picard_metrics.out.picard_to_multiqc.map { it -> it[1] }.collect())
+    .mix(qualimap.out.qualimap_to_multiqc.map { it -> it[1] }.collect())
     .mix(star.out.star_to_multiqc.collect())
     .mix(sortmerna.out[1].collect())
-    .mix(fastp.out.fastp_to_multiqc.collect())
+    .mix(fastp.out.fastp_json.collect())
     .mix(FASTQC.out.zip.map { it -> it[1] }.collect())
     .mix(SALMON_QUANT.out.salmon_to_multiqc.collect())).collect()
 
