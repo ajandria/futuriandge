@@ -58,25 +58,22 @@
     },
     "show_hidden_params": {
       "type": "string",
-      "default": "false",
       "hidden": true,
       "description": "Whether to show hidden parameters"
     },
     "monochrome_logs": {
       "type": "string",
-      "default": "false",
       "hidden": true,
       "description": "Print help and logs in monochrome"
     },
     "help": {
       "type": "string",
-      "default": "false",
       "hidden": true,
       "description": "Whether to show help msg"
     },
     "validate_params": {
-      "type": "string",
-      "default": "true",
+      "type": "boolean",
+      "default": true,
       "hidden": true,
       "description": "Whether to validate parameters"
     },
