@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://raw.githubusercontent.com/./master/nextflow_schema.json",
+  "title": ". pipeline parameters",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "contrasts": {
+      "type": "string",
+      "default": "null",
+      "description": "If missing the downstream subworkflow won't run"
+    },
+    "outDir": {
+      "type": "string",
+      "default": "${baseDir}/results",
+      "description": "Output directory"
+    },
+    "organism": {
+      "type": "string",
+      "default": "null",
+      "description": "Required organism"
+    },
+    "rRNA_db_path": {
+      "type": "string",
+      "default": "default hardcoded",
+      "description": "Path to SILVA db for SortMeRNA",
+      "hidden": true
+    },
+    "reference_genome": {
+      "type": "string",
+      "default": "default hardcoded",
+      "hidden": true,
+      "description": "Hardcoded depending on params.organism"
+    },
+    "gtf": {
+      "type": "string",
+      "default": "default hardcoded",
+      "hidden": true,
+      "description": "Hardcoded depending on params.organism"
+    },
+    "refFlat": {
+      "type": "string",
+      "default": "default hardcoded",
+      "hidden": true,
+      "description": "Hardcoded depending on params.organism"
+    },
+    "gene_map": {
+      "type": "string",
+      "default": "default hardcoded",
+      "hidden": true,
+      "description": "Hardcoded depending on params.organism"
+    },
+    "salmon_index": {
+      "type": "string",
+      "default": "default hardcoded",
+      "hidden": true,
+      "description": "Hardcoded depending on params.organism"
+    },
+    "show_hidden_params": {
+      "type": "string",
+      "hidden": true,
+      "description": "Whether to show hidden parameters"
+    },
+    "monochrome_logs": {
+      "type": "string",
+      "hidden": true,
+      "description": "Print help and logs in monochrome"
+    },
+    "help": {
+      "type": "string",
+      "hidden": true,
+      "description": "Whether to show help msg"
+    },
+    "validate_params": {
+      "type": "boolean",
+      "default": true,
+      "hidden": true,
+      "description": "Whether to validate parameters"
+    },
+    "input": {
+      "type": "string",
+      "default": "${baseDir}/tests/test_sample_sheet.csv"
+    }
+  },
+  "required": [
+    "organism",
+    "rRNA_db_path",
+    "reference_genome",
+    "gtf",
+    "refFlat",
+    "gene_map",
+    "salmon_index",
+    "input"
+  ]
+}
