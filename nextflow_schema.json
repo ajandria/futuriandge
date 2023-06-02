@@ -10,11 +10,6 @@
       "default": "null",
       "description": "If missing the downstream subworkflow won't run"
     },
-    "samplesheet": {
-      "type": "string",
-      "default": "${baseDir}/tests/test_sample_sheet.csv",
-      "description": "Path to the sample sheet"
-    },
     "outDir": {
       "type": "string",
       "default": "${baseDir}/results",
@@ -60,16 +55,44 @@
       "default": "default hardcoded",
       "hidden": true,
       "description": "Hardcoded depending on params.organism"
+    },
+    "show_hidden_params": {
+      "type": "string",
+      "default": "false",
+      "hidden": true,
+      "description": "Whether to show hidden parameters"
+    },
+    "monochrome_logs": {
+      "type": "string",
+      "default": "false",
+      "hidden": true,
+      "description": "Print help and logs in monochrome"
+    },
+    "help": {
+      "type": "string",
+      "default": "false",
+      "hidden": true,
+      "description": "Whether to show help msg"
+    },
+    "validate_params": {
+      "type": "string",
+      "default": "true",
+      "hidden": true,
+      "description": "Whether to validate parameters"
+    },
+    "input": {
+      "type": "string",
+      "default": "${baseDir}/tests/test_sample_sheet.csv"
     }
   },
   "required": [
-    "samplesheet",
     "organism",
     "rRNA_db_path",
     "reference_genome",
     "gtf",
     "refFlat",
     "gene_map",
-    "salmon_index"
+    "salmon_index",
+    "input"
   ]
 }
