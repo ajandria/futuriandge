@@ -1,13 +1,13 @@
 // Define the rRNA database paths
 rRNA = [
-    "${params.rRNA_db_path}/rfam-5.8s-database-id98.fasta",
-    "${params.rRNA_db_path}/rfam-5s-database-id98.fasta",
-    "${params.rRNA_db_path}/silva-arc-16s-id95.fasta",
-    "${params.rRNA_db_path}/silva-arc-23s-id98.fasta",
-    "${params.rRNA_db_path}/silva-bac-16s-id90.fasta",
-    "${params.rRNA_db_path}/silva-bac-23s-id98.fasta",
-    "${params.rRNA_db_path}/silva-euk-18s-id95.fasta",
-    "${params.rRNA_db_path}/silva-euk-28s-id98.fasta"
+    "rfam-5.8s-database-id98.fasta",
+    "rfam-5s-database-id98.fasta",
+    "silva-arc-16s-id95.fasta",
+    "silva-arc-23s-id98.fasta",
+    "silva-bac-16s-id90.fasta",
+    "silva-bac-23s-id98.fasta",
+    "silva-euk-18s-id95.fasta",
+    "silva-euk-28s-id98.fasta"
 ]
 
 process sortmerna {
