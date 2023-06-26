@@ -3,6 +3,10 @@ process picard_metrics {
     label 'process_high'
 
     publishDir "${params.outDir}/picard", mode: 'symlink'
+
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/picard:3.0.0--hdfd78af_1' :
+        'biocontainers/picard:3.0.0--hdfd78af_1' }"
    
     input:
     tuple val(meta), path(bam)
