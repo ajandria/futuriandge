@@ -1,14 +1,10 @@
-process fastp {
+process FASTP {
 
     // Tagging the process for easier identification in logs
     tag "fastp on ${meta.id}"
 
     // Define the intensity of resources required by the process
     label 'process_high'
-
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/fastp:0.23.4--h5f740d0_0' :
-        'biocontainers/fastp:0.23.4--h5f740d0_0' }"
 
     // Define the directory to publish results
     publishDir "${params.outDir}/fastp", mode: 'symlink'

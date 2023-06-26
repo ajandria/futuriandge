@@ -1,5 +1,5 @@
 
-process DESeq2_DOWNSTREAM {
+process DESEQ2 {
 
     publishDir "${params.outDir}/DESeq2_DOWNSTREAM", mode: 'symlink'
 

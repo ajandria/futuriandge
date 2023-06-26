@@ -1,5 +1,5 @@
 
-include { DESeq2_DOWNSTREAM } from "${baseDir}/modules/local/downstream_processing.nf"
+include { DESEQ2 } from "${baseDir}/modules/local/downstream_processing.nf"
 
 workflow DOWNSTREAM_PROCESSING {
 
@@ -7,6 +7,6 @@ workflow DOWNSTREAM_PROCESSING {
     reads
 
     main:
-    DESeq2_DOWNSTREAM(reads)
+    DESEQ2(reads)
 
 }

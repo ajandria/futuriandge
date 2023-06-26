@@ -2,7 +2,7 @@
 include { INPUT_CHECK } from "${baseDir}/subworkflows/local/input_check.nf"
 include { PROCESSING } from "${baseDir}/subworkflows/local/run_pipeline.nf"
 include { DOWNSTREAM_PROCESSING } from "${baseDir}/subworkflows/local/downstream_analysis.nf"
-include { MULTIQC } from "${baseDir}/subworkflows/local/run_MultiQC.nf"
+include { QC_MULTIQC } from "${baseDir}/subworkflows/local/run_MultiQC.nf"
 
 workflow UNIFORMAL {
 
@@ -18,7 +18,7 @@ workflow UNIFORMAL {
     )
 
     // Gather QC stats
-    MULTIQC(
+    QC_MULTIQC(
         PROCESSING.out.qc_MultiQC_input
     )
 
