@@ -15,6 +15,10 @@ process sortmerna {
     label 'process_high'  // Resources are configured in the base config
     publishDir "${params.outDir}/sortmerna", mode:'symlink'  // Specify the output directory
 
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/sortmerna:4.3.4--h9ee0642_0' :
+        'biocontainers/sortmerna:4.3.4--h9ee0642_0' }"
+
     input:
     tuple val(meta), path(reads)  // Accept a tuple of metadata and one or two FASTQ files
 
