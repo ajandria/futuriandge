@@ -1,4 +1,4 @@
-process picard_metrics {
+process PICARD_METRICS {
     tag "${meta.id}"
     label 'process_high'
 

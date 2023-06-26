@@ -10,7 +10,7 @@ rRNA = [
     "${params.rRNA_db_path}/silva-euk-28s-id98.fasta"
 ]
 
-process sortmerna {
+process SORTMERNA {
     tag "sortmerna on ${meta.id}"  // Tag the process with the id of the input data item
     label 'process_high'  // Resources are configured in the base config
     publishDir "${params.outDir}/sortmerna", mode:'symlink'  // Specify the output directory

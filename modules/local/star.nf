@@ -1,4 +1,4 @@
-process star {
+process STAR_ALIGN {
     publishDir "${params.outDir}/star", mode: 'symlink'
     label = 'intense'
     tag "star on ${meta}"

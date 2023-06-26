@@ -1,4 +1,4 @@
-process qualimap {
+process QUALIMAP {
     tag "${meta.id}"
     label 'intense'
 

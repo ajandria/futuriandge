@@ -1,5 +1,5 @@
 
-include { multiqc } from "${baseDir}/modules/local/multiqc.nf"
+include { MULTIQC } from "${baseDir}/modules/local/multiqc.nf"
 
 workflow MULTIQC {
 

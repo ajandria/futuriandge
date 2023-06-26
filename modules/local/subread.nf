@@ -1,4 +1,4 @@
-process featureCounts {
+process FEATURECOUNTS {
     publishDir "${params.outDir}/featureCounts", mode: 'symlink'
     
     tag "featureCounts on ${meta.id}" 

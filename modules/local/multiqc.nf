@@ -1,5 +1,5 @@
 
-process multiqc {
+process MULTIQC {
 
     publishDir "${params.outDir}/multiqc", mode:'symlink'
 

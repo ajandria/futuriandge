@@ -1,4 +1,4 @@
-process fastp {
+process FASTP {
 
     // Tagging the process for easier identification in logs
     tag "fastp on ${meta.id}"

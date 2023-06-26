@@ -6,7 +6,6 @@ process SALMON_QUANT {
     tag "${meta}"
     label "intense"
 
-    conda "conda-forge::boost-cpp bioconda::salmon=1.10.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/salmon:1.10.1--h7e5ed60_0' :
         'quay.io/biocontainers/salmon:1.10.1--h7e5ed60_0' }"

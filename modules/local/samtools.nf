@@ -1,4 +1,4 @@
-process samtools {
+process SAMTOOLS_FLAGSTAT {
     tag "${meta.id}"
 
     publishDir "${params.outDir}/samtools", mode: 'symlink'
