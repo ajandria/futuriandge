@@ -3,6 +3,10 @@ process featureCounts {
     
     tag "featureCounts on ${meta.id}" 
 
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/subread:2.0.1--hed695b0_0' :
+        'biocontainers/subread:2.0.1--hed695b0_0' }"
+
     input:
     tuple val(meta), path(bam)
     
