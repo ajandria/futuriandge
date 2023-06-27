@@ -24,10 +24,9 @@ fn_clean_exts:
   - "_salmon"
 
 # Removes cell and last two digits
-sp:
-  _cell_WTS_S\d+$:
-    fn: '*'
-    sample_names_trim: '_cell_WTS_S\d+$'
+extra_fn_clean_exts:
+  - type: regex
+    pattern: "_cell_WTS_S\d+$"
 
 # For custom order of different reports in the final HTML report
 module_order:
@@ -43,8 +42,8 @@ module_order:
 report_section_order:
   Samtools:
     before: qualimap
-  featurecounts:
+  featureCounts:
     before: Samtools
   Salmon:
-    before: featurecounts
+    before: featureCcounts
   
