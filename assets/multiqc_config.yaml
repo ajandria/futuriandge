@@ -6,9 +6,9 @@ report_header_info:
   - Contact E-mail: "adrian.janucik@gmail.com"
   - Application Type: "RNA-seq for DGE analysis"
   - Project Type: "Application"
-  - Sequencing Platform: "NovaSeq"
-  - Sequencing Setup: "2xNbp"
-  - Protocol: "TruSeq"
+  - Sequencing Platform: "Unknown"
+  - Sequencing Setup: "Unknown"
+  - Protocol: "Assumes TruSeq"
 
 # Used for cleaning sample names. Should be strings.
 # NB: These are removed in order!
@@ -21,6 +21,14 @@ fn_clean_exts:
   - "_raw"
   - "Aligned.sortedByCoord.out.bam"
   - "Log.final.out"
+  - "_salmon"
+  - "_T1"
+
+# Removes cell and last two digits
+sp:
+  _cell_WTS_S\d+$:
+    fn: '*'
+    sample_names_trim: '_cell_WTS_S\d+$'
 
 # For custom order of different reports in the final HTML report
 module_order:
@@ -38,4 +46,6 @@ report_section_order:
     before: qualimap
   featurecounts:
     before: Samtools
+  Salmon:
+    before: featurecounts
   
