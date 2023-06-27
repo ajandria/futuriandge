@@ -22,7 +22,6 @@ fn_clean_exts:
   - "Aligned.sortedByCoord.out.bam"
   - "Log.final.out"
   - "_salmon"
-  - "_T1"
 
 # Removes cell and last two digits
 sp:
