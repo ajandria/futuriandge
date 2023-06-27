@@ -26,7 +26,7 @@ fn_clean_exts:
 # Removes cell and last two digits
 extra_fn_clean_exts:
   - type: regex
-    pattern: "_cell_WTS_S\d+$"
+    pattern: "_cell_WTS_S\\d+$"
 
 # For custom order of different reports in the final HTML report
 module_order:
