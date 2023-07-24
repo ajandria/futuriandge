@@ -28,22 +28,23 @@ extra_fn_clean_exts:
   - type: regex
     pattern: "_cell_WTS_S\\d+$"
 
+# General removal
+sample_names_replace_regex: True
+sample_names_replace:
+  "_T1": ""
+  "_L001": ""
+  "_1": ""
+
 # For custom order of different reports in the final HTML report
 module_order:
-          - fastqc
-          - fastp
-          - sortmerna
-          - star
-          - picard
-          - qualimap
-
-# Some modules may not be placed in proper order (e.g. using the above method)
-# then the following can be assessed to put `featurecounts` -> `Samtools` from the bottom
-report_section_order:
-  Samtools:
-    before: qualimap
-  featureCounts:
-    before: Samtools
-  Salmon:
-    before: featureCcounts
-  
+  - fastqc:
+      path_filters:
+        - "*_1_fastqc.zip" # analyse only R1 as R2 is usually artificially worse (due to technical reasons)
+  - fastp
+  - sortmerna
+  - star
+  - picard
+  - qualimap
+  - samtools
+  - featureCounts
+  - salmon

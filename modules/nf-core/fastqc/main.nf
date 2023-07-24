@@ -2,6 +2,8 @@ process FASTQC {
     tag "$meta.id"
     label 'process_medium'
 
+    publishDir "${params.outDir}/fastqc", mode:'symlink'
+
     input:
     tuple val(meta), path(reads)
 
