@@ -62,8 +62,8 @@
         "rRNA_db_path"
       ]
     },
-    "medical_university_of_bialystok": {
-      "title": "Medical University of Bialystok",
+    "general_setup": {
+      "title": "General setup",
       "type": "object",
       "description": "MUB's parameters",
       "default": "",
@@ -143,6 +143,11 @@
           "type": "string",
           "description": "Name of a custom profile",
           "default": "Global"
+        },
+        "version": {
+          "type": "string",
+          "default": "false",
+          "hidden": true
         }
       }
     }
@@ -152,7 +157,7 @@
       "$ref": "#/definitions/mub_s_reference_files"
     },
     {
-      "$ref": "#/definitions/medical_university_of_bialystok"
+      "$ref": "#/definitions/general_setup"
     },
     {
       "$ref": "#/definitions/additional_run_specific_parameters"
