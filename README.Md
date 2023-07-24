@@ -10,7 +10,12 @@ Welcome to **DE_RNA-Seq_nf** - a bioinformatics best-practice analysis pipeline 
 
 ## Run test data as:
 ```
-nextflow run ajandria/futuriandge -r dev -profile cluster,conda --organism mouse
+nextflow run ajandria/futuriandge -r main -latest -profile cluster,conda,test --organism mouse --outDir .
+```
+
+## Standard pipeline run:
+```
+nextflow run ajandria/futuriandge -r main -latest -profile cluster,singularity --organism mouse/human --outDir . --input samplesheet.csv
 ```
 
 **Currently the pipeline supports only the MUB infrastructure (hardcoded references).**
