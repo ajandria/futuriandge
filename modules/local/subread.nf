@@ -42,6 +42,6 @@ process FEATURECOUNTS {
     echo "sample_id,is_single_end,strandedness,count_matrix_path" > ${meta.id}_downstream_info.txt
     
     # Write sample info to file
-    echo "${meta.id},${meta.single_end},${meta.strandedness},${PWD}/${meta.id}_featureCounts_matrix.txt" >> ${meta.id}_downstream_info.txt
+    echo "${meta.id},${meta.single_end},${meta.strandedness},\$PWD/${meta.id}_featureCounts_matrix.txt" >> ${meta.id}_downstream_info.txt
     """
 }
