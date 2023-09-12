@@ -21,7 +21,7 @@ process DESEQ2 {
     # Remove lines containing the header except for the first occurrence in the first line
     sed -i '1!{/sample_id,is_single_end,strandedness,count_matrix_path/d}' all_downstream_info.txt
 
-    index-downstream.R all_downstream_info.txt ${org} ${user_file}
+    index-downstream.R all_downstream_info.txt ${org} /futuriandgeDownstream/${user_file}
 
     """  
 }
